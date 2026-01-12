@@ -1,64 +1,31 @@
+#include "../headers/vehicle.h"
 #include <iostream>
 
-typedef enum {
-    NORTH, SOUTH, EAST, WEST
-} directionState;
-
-typedef enum {
-    STOPPED, HALF_SPEED, FULL_SPEED
-} speedState;
-
-typedef enum {
-    LEFT, RIGHT, UTURN
-} turnAction;
-
-class SelfDrivingCar {
-public:
-    SelfDrivingCar(int pos_x, int pos_y, direction dir);
-    ~SelfDrivingCar();
-    
-    void accelerate();
-    void decelerate();
-    void turn(turnAction action);
-    void move();
-
-    void collectSensorData();
-    void syncNavigationSystem();
-    void executeMovement();
-private:
-    int pos_x, pos_y;
-    direction dir;
-    speedState speed;
-};
-
-SelfDrivingCar::SelfDrivingCar(int pos_x, int pos_y, direction dir) {
-    this->pos_x = pos_x;
-    this->pos_y = pos_y;
-    this->dir   = dir;
-    this->speed = STOPPED;
-}
+SelfDrivingCar::SelfDrivingCar(int x, int y, Direction dir)
+    : pos{ x, y }, dir(dir), speed(STOPPED) {}
 
 SelfDrivingCar::~SelfDrivingCar() {
-    cout << "SelfDrivingCar Destructed\n";
+    std::cout << "SelfDrivingCar Destructed\n";
 }
 
-SelfDrivingCar::accelerate() {
-    if (speed == STOPPED)
+void SelfDrivingCar::accelerate() {
+    if (speed == STOPPED) {
         speed = HALF_SPEED;
-    else if (speed == HALF_SPEED)
+    } else if (speed == HALF_SPEED) {
         speed = FULL_SPEED;
+    }
 }
 
-SelfDrivingCar::decelerate() {
-    if (speed == FULL_SPEED)
-        speed = HALF_SPEED
-    else if (speed == HALF_SPEED)
-        speed = STOPPED
+void SelfDrivingCar::decelerate() {
+    if (speed == FULL_SPEED) {
+        speed = HALF_SPEED;
+    } else if (speed == HALF_SPEED) {
+        speed = STOPPED;
+    }
 }
 
-SelfDrivingCar::turn(turnAction action) {
+void SelfDrivingCar::turn(TurnAction action) {
     switch (action) {
-
         case RIGHT:
             switch (dir) {
                 case NORTH: dir = EAST;  break;
@@ -88,21 +55,25 @@ SelfDrivingCar::turn(turnAction action) {
     }
 }
 
-SelfDrivingCar::move() {
-    int steps, i;
+void SelfDrivingCar::move() {
+    int steps = 0;
 
     switch (speed) {
-        case STOPPED:     steps = 0; break;
-        case HALF_SPEED:  steps = 1; break;
-        case FULL_SPEED:  steps = 2; break;
+        case STOPPED:    steps = 0; break;
+        case HALF_SPEED: steps = 1; break;
+        case FULL_SPEED: steps = 2; break;
     }
 
-    for (i = 0; i < steps; i++) {
+    for (int i = 0; i < steps; i++) {
         switch (dir) {
-            case NORTH: pos_y++; break;
-            case SOUTH: pos_y--; break;
-            case EAST:  pos_x++; break;
-            case WEST:  pos_x--; break;
+            case NORTH: pos.y++; break;
+            case SOUTH: pos.y--; break;
+            case EAST:  pos.x++; break;
+            case WEST:  pos.x--; break;
         }
     }
 }
+
+void SelfDrivingCar::collectSensorData() {}
+void SelfDrivingCar::syncNavigationSystem() {}
+void SelfDrivingCar::executeMovement() {}
