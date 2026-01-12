@@ -67,6 +67,12 @@ public:
 
 	virtual vector<SensorReading> sense(const Position& vehiclePos, Direction vehicleDir) const = 0;
 
+	// Which optional SensorReading fields this sensor can populate.
+	virtual bool providesSpeed() const { return false; }
+	virtual bool providesDirection() const { return false; }
+	virtual bool providesSignText() const { return false; }
+	virtual bool providesTrafficLight() const { return false; }
+
 	int getRange() const;
 	FOV getFOV() const;
 	bool canDetectStatic() const;
@@ -77,16 +83,31 @@ class LidarSensor : public Sensor {
 public:
 	LidarSensor();
 	vector<SensorReading> sense(const Position& vehiclePos, Direction vehicleDir) const override;
+
+	bool providesSpeed() const override { return false; }
+	bool providesDirection() const override { return false; }
+	bool providesSignText() const override { return false; }
+	bool providesTrafficLight() const override { return false; }
 };
 
 class RadarSensor : public Sensor {
 public:
 	RadarSensor();
 	vector<SensorReading> sense(const Position& vehiclePos, Direction vehicleDir) const override;
+
+	bool providesSpeed() const override { return true; }
+	bool providesDirection() const override { return true; }
+	bool providesSignText() const override { return false; }
+	bool providesTrafficLight() const override { return false; }
 };
 
 class CameraSensor : public Sensor {
 public:
 	CameraSensor();
 	vector<SensorReading> sense(const Position& vehiclePos, Direction vehicleDir) const override;
+
+	bool providesSpeed() const override { return true; }
+	bool providesDirection() const override { return true; }
+	bool providesSignText() const override { return true; }
+	bool providesTrafficLight() const override { return true; }
 };

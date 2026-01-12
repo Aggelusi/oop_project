@@ -31,13 +31,14 @@ void SensorReading::setDirection(Direction d) { direction = d; }
 void SensorReading::setSignText(const string& text) { signText = text; }
 void SensorReading::setTrafficLight(const string& color) { trafficLight = color; }
 
-Sensor::Sensor(int range, FOV fov, int distanceAccuracy, int objectAccuracy, bool detectStatic, bool detectMoving)
+Sensor::Sensor(int range, FOV fov, int distanceAccuracy, int objectAccuracy, bool detectStatic, bool detectMoving, bool signColorText)
     : range(range),
       fov(fov),
       distanceAccuracy(distanceAccuracy),
       objectAccuracy(objectAccuracy),
       detectStatic(detectStatic),
-      detectMoving(detectMoving) {}
+    detectMoving(detectMoving),
+    signColorText(signColorText) {}
 
 int Sensor::getRange() const { return range; }
 FOV Sensor::getFOV() const { return fov; }
