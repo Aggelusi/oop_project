@@ -1,17 +1,6 @@
 #pragma once
 
-enum Direction {
-	NORTH,
-	SOUTH,
-	EAST,
-	WEST
-};
-
-enum SpeedState {
-	STOPPED,
-	HALF_SPEED,
-	FULL_SPEED
-};
+#include "grid.h"
 
 enum TurnAction {
 	LEFT,
@@ -19,14 +8,9 @@ enum TurnAction {
 	UTURN
 };
 
-struct Position {
-	int x;
-	int y;
-};
-
 class SelfDrivingCar {
 public:
-	SelfDrivingCar(int x, int y, Direction dir);
+	SelfDrivingCar(int x, int y, directionState dir);
 	~SelfDrivingCar();
 
 	void accelerate();
@@ -40,7 +24,6 @@ public:
 
 private:
 	Position pos;
-	Direction dir;
-	SpeedState speed;
+	directionState dir;
+	speedState speed;
 };
-

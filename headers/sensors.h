@@ -21,19 +21,19 @@ private:
 	string objectID;
 	float confidence;
 
-	optional<SpeedState> speed;
-	optional<Direction> direction;
+	optional<speedState> speed;
+	optional<directionState> direction;
 	optional<string> signText;
 	optional<string> trafficLight;
 
 public:
 	SensorReading(
-		const string& type,
+		const std::string& type,
 		int distance,
-		int pos_x,
-		int pos_y,
-		const string& objectID,
-		float confidence);
+		const Position& pos,
+		const std::string& objectID,
+		float confidence
+	);
 
 	const string& getType() const;
 	int getDistance() const;
@@ -41,13 +41,13 @@ public:
 	const string& getObjectID() const;
 	float getConfidence() const;
 
-	const optional<SpeedState>& getSpeed() const;
-	const optional<Direction>& getDirection() const;
+	const optional<speedState>& getSpeed() const;
+	const optional<directionState>& getDirection() const;
 	const optional<string>& getSignText() const;
 	const optional<string>& getTrafficLight() const;
 
-	void setSpeed(SpeedState s);
-	void setDirection(Direction d);
+	void setSpeed(speedState s);
+	void setDirection(directionState d);
 	void setSignText(const string& text);
 	void setTrafficLight(const string& color);
 };
@@ -65,7 +65,7 @@ public:
 	Sensor(int range, FOV fov, int distanceAccuracy, int objectAccuracy, bool detectStatic, bool detectMoving, bool signColorText);
 	virtual ~Sensor() = default;
 
-	virtual vector<SensorReading> sense(const Position& vehiclePos, Direction vehicleDir) const = 0;
+	virtual vector<SensorReading> sense(const GridWorld& world, const Position& vehiclePos, directionState vehicleDir) const = 0;
 
 	// Which optional SensorReading fields this sensor can populate.
 	virtual bool providesSpeed() const { return false; }
@@ -77,12 +77,14 @@ public:
 	FOV getFOV() const;
 	bool canDetectStatic() const;
 	bool canDetectMoving() const;
+	int getDistanceAccuracy() const { return distanceAccuracy; }
+	int getObjectAccuracy() const { return objectAccuracy; }
 };
 
 class LidarSensor : public Sensor {
 public:
 	LidarSensor();
-	vector<SensorReading> sense(const Position& vehiclePos, Direction vehicleDir) const override;
+	vector<SensorReading> sense(const GridWorld& world, const Position& vehiclePos, directionState vehicleDir) const override;
 
 	bool providesSpeed() const override { return false; }
 	bool providesDirection() const override { return false; }
@@ -93,7 +95,7 @@ public:
 class RadarSensor : public Sensor {
 public:
 	RadarSensor();
-	vector<SensorReading> sense(const Position& vehiclePos, Direction vehicleDir) const override;
+	vector<SensorReading> sense(const GridWorld& world, const Position& vehiclePos, directionState vehicleDir) const override;
 
 	bool providesSpeed() const override { return true; }
 	bool providesDirection() const override { return true; }
@@ -104,7 +106,7 @@ public:
 class CameraSensor : public Sensor {
 public:
 	CameraSensor();
-	vector<SensorReading> sense(const Position& vehiclePos, Direction vehicleDir) const override;
+	vector<SensorReading> sense(const GridWorld& world, const Position& vehiclePos, directionState vehicleDir) const override;
 
 	bool providesSpeed() const override { return true; }
 	bool providesDirection() const override { return true; }
