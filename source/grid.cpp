@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <typeinfo>
 #include <ctime>
+#include "../headers/grid.h"
 using namespace std;
 
 class GridWorld;
