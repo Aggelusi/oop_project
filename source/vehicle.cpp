@@ -1,7 +1,7 @@
 #include "../headers/vehicle.h"
 #include <iostream>
 
-SelfDrivingCar::SelfDrivingCar(int x, int y, Direction dir)
+SelfDrivingCar::SelfDrivingCar(int x, int y, directionState dir)
     : pos{ x, y }, dir(dir), speed(STOPPED) {}
 
 SelfDrivingCar::~SelfDrivingCar() {
