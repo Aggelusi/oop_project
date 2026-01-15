@@ -1,6 +1,8 @@
 #pragma once
-
+using namespace std;
 #include "grid.h"
+#include "sensors.h"
+#include <vector>
 
 enum TurnAction {
 	LEFT,
@@ -22,8 +24,29 @@ public:
 	void syncNavigationSystem();
 	void executeMovement();
 
+	void attachToWorld(GridWorld* w);
+    void addSensor(Sensor* s);
+    void setGPSTargets(const std::vector<Position>& targets);
+    Position getPosition() const;
+    directionState getDirection() const;
+
 private:
 	Position pos;
 	directionState dir;
 	speedState speed;
+
+	GridWorld* world = nullptr;	
+	vector<Sensor*> sensors;
+
+	vector<SensorReading> rawReadings;
+	vector<SensorReading> fusedReadings;
+
+	vector<Position> gpsTargets;
+	size_t currentTargetIndex = 0;
+
+	double minConfidenceThreshold = 0.40;
+
+	void fuseSensorData();
+    int manhattanDistance(const Position& a, const Position& b) const;
+    bool atCurrentTarget(int threshold = 5) const;
 };

@@ -76,4 +76,12 @@ void SelfDrivingCar::move() {
 
 void SelfDrivingCar::collectSensorData() {}
 void SelfDrivingCar::syncNavigationSystem() {}
-void SelfDrivingCar::executeMovement() {}
+void SelfDrivingCar::executeMovement() {
+    move();
+}
+
+void SelfDrivingCar::attachToWorld(GridWorld* w) { world = w; }
+void SelfDrivingCar::addSensor(Sensor* s) { sensors.push_back(s); }
+void SelfDrivingCar::setGPSTargets(const std::vector<Position>& targets) { gpsTargets = targets; currentTargetIndex = 0; }
+Position SelfDrivingCar::getPosition() const { return pos; }
+directionState SelfDrivingCar::getDirection() const { return dir; }
