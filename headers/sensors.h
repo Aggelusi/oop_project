@@ -6,13 +6,7 @@
 #include <vector>
 
 #include "vehicle.h"
-#include "grid.h"
 using namespace std;
-
-struct Position {
-    int x;
-    int y;
-};
 
 enum class FOV {
 	STRAIGHT,
@@ -83,8 +77,8 @@ public:
 	FOV getFOV() const;
 	bool canDetectStatic() const;
 	bool canDetectMoving() const;
-	int getDistanceAccuracy() const;
-	int getObjectAccuracy() const;
+	int getDistanceAccuracy() const { return distanceAccuracy; }
+	int getObjectAccuracy() const { return objectAccuracy; }
 };
 
 class LidarSensor : public Sensor {
