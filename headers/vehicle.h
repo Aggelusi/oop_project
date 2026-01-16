@@ -1,5 +1,6 @@
 #pragma once
 using namespace std;
+#include "types.h"
 #include "grid.h"
 #include "sensors.h"
 #include <vector>
@@ -7,8 +8,8 @@ using namespace std;
 #include <cmath>
 #include <string>
 
-class Sensor;          // ✅ forward declaration
-class SensorReading;  // ✅ forward declaration
+class Sensor;          //forward declaration
+class SensorReading;  //forward declaration
 class GridWorld;
 
 enum TurnAction {

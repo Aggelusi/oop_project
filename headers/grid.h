@@ -5,23 +5,8 @@
 #include <cstdlib>
 #include <typeinfo>
 #include <ctime>
-#include "vehicle.h"
+#include "types.h"
 using namespace std;
-
-struct Position {
-    int x;
-    int y;
-};
-
-enum directionState {
-    NORTH, SOUTH, EAST, WEST
-};
-
-enum speedState {
-    STOPPED, HALF_SPEED, FULL_SPEED
-};
-
-enum TrafficLightState { RED, GREEN, YELLOW };
 
 class GridWorld; //Forward declaration
 
