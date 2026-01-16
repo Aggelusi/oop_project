@@ -170,18 +170,20 @@ int main(int argc, char** argv) {
     return 0;
 }
 void printHelp() {
-    cout << "Usage: oop_project [options]\n"
-         << "Options:\n"
-         << "  --help                          Show this help message\n"
-         << "  --seed <int>                    Random seed (default: current time)\n"
-         << "  --dimX <int>                    Grid width (default: 40)\n"
-         << "  --dimY <int>                    Grid height (default: 40)\n"
-         << "  --numMovingCars <int>           Number of moving cars (default: 3)\n"
-         << "  --numMovingBikes <int>          Number of moving bikes (default: 4)\n"
-         << "  --numParkedCars <int>           Number of parked cars (default: 5)\n"
-         << "  --numStopSigns <int>            Number of stop signs (default: 2)\n"
-         << "  --numTrafficLights <int>        Number of traffic lights (default: 2)\n"
-         << "  --simulationTicks <int>         Number of simulation ticks (default: 100)\n"
-         << "  --minConfidenceThreshold <float> Minimum confidence threshold for navigation (default: 0.40)\n"
-         << "  --gps <x1> <y1> [<x2> <y2> ...] GPS target coordinates (required)\n";
+    cout << "Self-Driving Car Simulation\n"
+         << "   Usage:\n"
+         << "      --seed <n>                   | Random seed (default: current time)\n"
+         << "      --dimX <n>                   | World width (default: 40)\n"
+         << "      --dimY <n>                   | World height (default: 40)\n"
+         << "      --numMovingCars <n>          | Number of moving cars (default: 3)\n"
+         << "      --numMovingBikes <n>         | Number of moving bikes (default: 4)\n"
+         << "      --numParkedCars <n>          | Number of parked cars (default: 5)\n"
+         << "      --numStopSigns <n>           | Number of stop signs (default: 2)\n"
+         << "      --numTrafficLights <n>       | Number of traffic lights (default: 2)\n"
+         << "      --simulationTicks <n>        | Maximum simulation ticks (default: 100)\n"
+         << "      --minConfidenceThreshold <n> | Minimum confidence cutofff (default: 40)\n"
+         << "      --gps <x1> <y1> [x2 y2 ...]  | GPS target coordinates (required)\n"
+         << "      --help                       | Show this help message\n\n"
+         << "   Example Usage:\n"
+         << "   ./oopproj_2025 --seed 12 --dimY 50 --gps 10 20 32 15" << endl;
 }
