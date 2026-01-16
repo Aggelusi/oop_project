@@ -4,7 +4,7 @@
 #include <optional>
 #include <string>
 #include <vector>
-
+#include "types.h"
 #include "vehicle.h"
 #include "grid.h"
 using namespace std;
