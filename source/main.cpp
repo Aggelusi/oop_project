@@ -22,6 +22,8 @@ int main(int argc, char** argv) {
     int numStopSigns = 2;
     int numTrafficLights = 2;
     int simulationTicks = 100;
+    int visualization = 0; // 0 = full, 1 = pov
+    int viewRadius;
     double minConfidenceThreshold = 0.40;
     vector<Position> gpsTargets;
     bool gpsProvided = false;
@@ -63,6 +65,15 @@ int main(int argc, char** argv) {
                 return 1;
             }
             numMovingBikes = stoi(argv[++i]);
+        } else if (arg == "--visualization_full") {
+            visualization = 0;
+        } else if (arg == "--visualization_pov") {
+            if (i + 1 >= argc) {
+                cerr << "Missing value for --visualization_pov\n";
+                return 1;
+            }
+            visualization = 1;
+            viewRadius = stoi(argv[++i]);
         } else if (arg == "--numParkedCars") {
             if (i + 1 >= argc) {
                 cerr << "Missing value for --numParkedCars\n";
@@ -155,12 +166,16 @@ int main(int argc, char** argv) {
     cout << "Starting simulation...\n";
 
     // Main simulation loop.
+    if (visualization == 0) {
+        cout << "Initial World State:\n";
+        world.displayWorld(car.getPosition());
+    }
     for (int tick = 0; tick < simulationTicks; tick++) {
-        cout << "\nTick " << tick << ":\n";
-
-        Position p = car.getPosition();
-        cout << "Car position: (" << p.x << ", " << p.y << ")\n";
-
+        if (visualization == 1){
+            cout << "\nTick " << tick << ":\n";
+            world.displaySurroundings(car.getPosition(), viewRadius);
+        }
+        
         // Update world and car state.
         world.update();
         car.collectSensorData();
@@ -168,9 +183,13 @@ int main(int argc, char** argv) {
         car.executeMovement();
 
         if (car.isNavigationComplete()) {
-            cout << "\nSimulation finished.\n";
-            return 0;
+            break;
         }
+    }
+    if (visualization == 0) {
+        cout << "\nSimulation ended after " << simulationTicks << " ticks.\n";
+        cout << "\nFinal World State:\n";
+        world.displayWorld(car.getPosition());
     }
 
     cout << "\nSimulation finished.\n";
@@ -183,6 +202,8 @@ void printHelp() {
          << "  --seed <int>                    Random seed (default: current time)\n"
          << "  --dimX <int>                    Grid width (default: 40)\n"
          << "  --dimY <int>                    Grid height (default: 40)\n"
+         << "  --visualization_full            Shows full grid at start and end of simulation. Mutually exclusive with --visualization_pov. (default)\n"
+         << "  --visualization_pov <int>       Shows grid around vehicle position within view radius. Mutually exclusive with --visualization_full.\n"
          << "  --numMovingCars <int>           Number of moving cars (default: 3)\n"
          << "  --numMovingBikes <int>          Number of moving bikes (default: 4)\n"
          << "  --numParkedCars <int>           Number of parked cars (default: 5)\n"

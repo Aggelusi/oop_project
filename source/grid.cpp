@@ -91,10 +91,29 @@ int GridWorld::getDimY() const{return dimY;};
 int GridWorld::index(int x, int y) const{return x + (dimX * y);} //Returns index to access grid at (x,y), (equivalent to grid[x][y] if array was 2dim)
 Object* GridWorld::getv(int x, int y) const {return grid[index(x,y)];} //Returns value of grid at (x,y)
 void GridWorld::setv(int x, int y, Object* obj) {grid[index(x,y)] = obj; if(obj != NULL) {displayGrid[index(x,y)] = obj->getGlyph();} else {displayGrid[index(x,y)] = '.';}} //Sets value of grid at (x,y) to pointer to object
-void GridWorld::displayWorld() const { //Prints displayGrid
+void GridWorld::displayWorld(Position vehiclePos) const { //Prints displayGrid
     for (int j = 0; j < dimY; j++){
         for (int i = 0; i < dimX; i++){
-            cout << displayGrid[index(i,j)];
+            if (i == vehiclePos.x && j == vehiclePos.y)
+                cout << '@';
+            else
+                cout << displayGrid[index(i,j)];
+        }
+        cout << "\n";
+    }
+}
+void GridWorld::displaySurroundings(Position vehiclePos, int viewRadius) const { //Prints displayGrid around vehicle position within viewRadius
+    int startX = max(0, vehiclePos.x - viewRadius);
+    int endX = min(dimX - 1, vehiclePos.x + viewRadius);
+    int startY = max(0, vehiclePos.y - viewRadius);
+    int endY = min(dimY - 1, vehiclePos.y + viewRadius);
+
+    for (int j = startY; j <= endY; j++){
+        for (int i = startX; i <= endX; i++){
+            if (i == vehiclePos.x && j == vehiclePos.y)
+                cout << '@';
+            else
+                cout << displayGrid[index(i,j)];
         }
         cout << "\n";
     }

@@ -126,7 +126,8 @@ class GridWorld{
         void setv(int x, int y, Object* obj); //Sets value of grid at (x,y) to pointer to object
         void generateWorld(); //Generates world with objects
         void update(); //Updates world state by one tick
-        void displayWorld() const; //Prints displayGrid
+        void displayWorld(Position vehiclePos) const; //Prints displayGrid
+        void displaySurroundings(Position vehiclePos, int viewRadius) const; //Prints grid around vehicle position
         void collisionHandler(Position pos, Object* objNew); //Handles object collisions to properly set visibility
         void reorganize(Position pos, Object* obj); //Reorganize object's old position in grid
         void paramChecker(); //Ensures parameters are within acceptable ranges
