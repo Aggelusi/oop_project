@@ -1,6 +1,7 @@
 #include "../headers/vehicle.h"
 #include <iostream>
 
+// Initialize car position, direction, and speed.
 SelfDrivingCar::SelfDrivingCar(int x, int y, directionState dir)
     : pos{ x, y }, dir(dir), speed(STOPPED) {}
 
@@ -8,6 +9,7 @@ SelfDrivingCar::~SelfDrivingCar() {
     std::cout << "SelfDrivingCar Destructed\n";
 }
 
+// Increase speed one level.
 void SelfDrivingCar::accelerate() {
     if (speed == STOPPED) {
         speed = HALF_SPEED;
@@ -16,6 +18,7 @@ void SelfDrivingCar::accelerate() {
     }
 }
 
+// Decrease speed one level.
 void SelfDrivingCar::decelerate() {
     if (speed == FULL_SPEED) {
         speed = HALF_SPEED;
@@ -24,6 +27,7 @@ void SelfDrivingCar::decelerate() {
     }
 }
 
+// Apply a turn action to update direction.
 void SelfDrivingCar::turn(TurnAction action) {
     switch (action) {
         case RIGHT:
@@ -55,6 +59,7 @@ void SelfDrivingCar::turn(TurnAction action) {
     }
 }
 
+// Move forward based on current direction and speed.
 void SelfDrivingCar::move() {
     int steps = 0;
 
@@ -74,6 +79,7 @@ void SelfDrivingCar::move() {
     }
 }
 
+// Query all sensors and append their readings.
 void SelfDrivingCar::collectSensorData() {
     rawReadings.clear();
     if (!world) return;
@@ -84,12 +90,14 @@ void SelfDrivingCar::collectSensorData() {
         rawReadings.insert(rawReadings.end(), sensorOut.begin(), sensorOut.end());
     }
 }
+// Fuse raw readings into a cleaned set for navigation logic.
 void SelfDrivingCar::syncNavigationSystem() {
     fusedReadings.clear();
     if (rawReadings.empty()) return;
     fuseSensorData();
 }
 
+// Combine multiple readings per object into a single fused reading.
 void SelfDrivingCar::fuseSensorData() {
     vector<string> processedIDs;
     for (size_t i = 0; i < rawReadings.size(); i++) {
@@ -141,27 +149,37 @@ void SelfDrivingCar::fuseSensorData() {
     }
 }
 
+// Compute Manhattan distance between two positions.
 int SelfDrivingCar::manhattanDistance(const Position& a, const Position& b) const {
     return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
+// Check if car is within threshold of current GPS target.
 bool SelfDrivingCar::atCurrentTarget(int threshold) const {
     if (gpsTargets.empty() || currentTargetIndex >= gpsTargets.size()) return false;
     return manhattanDistance(pos, gpsTargets[currentTargetIndex]) <= threshold;
 }
 
+// Navigation loop: evaluate hazards, steer to target, and move.
 void SelfDrivingCar::executeMovement() {
     if (gpsTargets.empty()) {
         move();
         return;
     }
 
-    if (atCurrentTarget(5)) {
+    if (currentTargetIndex >= gpsTargets.size()) {
+        speed = STOPPED;
+        return;
+    }
+
+    const int arrivalThreshold = 0;
+    if (atCurrentTarget(arrivalThreshold)) {
         std::cout << "[NAV] Arrived target (" << gpsTargets[currentTargetIndex].x << "," << gpsTargets[currentTargetIndex].y << ")\n";
         if (currentTargetIndex + 1 < gpsTargets.size()) {
             currentTargetIndex++;
         } else {
             speed = STOPPED;
+            currentTargetIndex = gpsTargets.size();
             std::cout << "[NAV] Final target reached.\n";
             return;
         }
@@ -184,34 +202,58 @@ void SelfDrivingCar::executeMovement() {
         }
     }
 
+    Position target = gpsTargets[currentTargetIndex];
+    directionState desired = dir;
+    if (pos.y < target.y) {
+        desired = NORTH;
+    } else if (pos.y > target.y) {
+        desired = SOUTH;
+    } else if (pos.x < target.x) {
+        desired = EAST;
+    } else if (pos.x > target.x) {
+        desired = WEST;
+    }
+
+    dir = desired;
+
+    int dx = abs(pos.x - target.x);
+    int dy = abs(pos.y - target.y);
+    int axisDist = (dy != 0) ? dy : dx;
+
     if (hazardClose || needToSlowForLight) {
         decelerate();
     } else {
-        if (!atCurrentTarget(5)) accelerate();
+        if (axisDist > 1 && !atCurrentTarget(arrivalThreshold)) {
+            accelerate();
+        }
     }
 
-    Position target = gpsTargets[currentTargetIndex];
-    if (pos.y < target.y) {
-        if (dir != NORTH) {
-            turn(LEFT);
-        }
-    } else if (pos.y > target.y) {
-        if (dir != SOUTH) {
-            turn(LEFT);
-        }
-    } else {
-        if (pos.x < target.x) {
-            if (dir != EAST) turn(LEFT);
-        } else if (pos.x > target.x) {
-            if (dir != WEST) turn(LEFT);
-        }
+    if (axisDist == 0) {
+        speed = STOPPED;
+    } else if (axisDist == 1 && speed == FULL_SPEED) {
+        speed = HALF_SPEED;
     }
 
     move();
 }
 
+// Attach car to a world so sensors can query it.
 void SelfDrivingCar::attachToWorld(GridWorld* w) { world = w; }
+
+// Add a sensor to the car.
 void SelfDrivingCar::addSensor(Sensor* s) { sensors.push_back(s); }
+
+// Set the GPS targets and reset progress.
 void SelfDrivingCar::setGPSTargets(const std::vector<Position>& targets) { gpsTargets = targets; currentTargetIndex = 0; }
+
+// Configure minimum confidence for fused readings.
+void SelfDrivingCar::setMinConfidenceThreshold(double threshold) { minConfidenceThreshold = threshold; }
+
 Position SelfDrivingCar::getPosition() const { return pos; }
 directionState SelfDrivingCar::getDirection() const { return dir; }
+
+// Returns true when all targets are reached.
+bool SelfDrivingCar::isNavigationComplete() const {
+    if (gpsTargets.empty()) return false;
+    return currentTargetIndex >= gpsTargets.size();
+}

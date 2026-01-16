@@ -6,6 +6,7 @@
 #include <iostream>
 using namespace std;
 
+// Construct a sensor reading with confidence metadata.
 SensorReading::SensorReading(
     const std::string& type,
     int distance,
@@ -15,6 +16,7 @@ SensorReading::SensorReading(
 ) : type(type), distance(distance), pos(pos), objectID(objectID), confidence(confidence) {}
 
 
+// Accessors for reading fields.
 const string& SensorReading::getType() const { return type; }
 int SensorReading::getDistance() const { return distance; }
 const Position& SensorReading::getPosition() const { return pos; }
@@ -26,12 +28,14 @@ const optional<directionState>& SensorReading::getDirection() const { return dir
 const optional<string>& SensorReading::getSignText() const { return signText; }
 const optional<string>& SensorReading::getTrafficLight() const { return trafficLight; }
 
+// Optional metadata setters.
 void SensorReading::setSpeed(speedState s) { speed = s; }
 void SensorReading::setDirection(directionState d) { direction = d; }
 void SensorReading::setSignText(const string& text) { signText = text; }
 void SensorReading::setTrafficLight(const string& color) { trafficLight = color; }
 
 
+// Base sensor configuration.
 Sensor::Sensor(int range, FOV fov, int distanceAccuracy, int objectAccuracy, bool detectStatic, bool detectMoving, bool signColorText)
     : range(range),
       fov(fov),
@@ -41,6 +45,7 @@ Sensor::Sensor(int range, FOV fov, int distanceAccuracy, int objectAccuracy, boo
     detectMoving(detectMoving),
     signColorText(signColorText) {}
 
+// Base sensor getters.
 int Sensor::getRange() const { return range; }
 FOV Sensor::getFOV() const { return fov; }
 bool Sensor::canDetectStatic() const { return detectStatic; }
@@ -48,8 +53,10 @@ bool Sensor::canDetectMoving() const { return detectMoving; }
 int Sensor::getDistanceAccuracy() const { return distanceAccuracy; }
 int Sensor::getObjectAccuracy() const { return objectAccuracy; }
 
+// Lidar detects nearby objects in a square FOV.
 LidarSensor::LidarSensor() : Sensor(9, FOV::SQUARE, 99, 87, true, true, false) {}
 vector<SensorReading> LidarSensor::sense(const GridWorld& world, const Position& vehiclePos, directionState vehicleDir) const {
+    // Scan around the vehicle in a square radius.
     vector<SensorReading> readings;
 
     int dimX = world.getDimX();
@@ -104,8 +111,10 @@ vector<SensorReading> LidarSensor::sense(const GridWorld& world, const Position&
 }
 
 
+// Radar detects moving objects along the forward direction.
 RadarSensor::RadarSensor() : Sensor(12, FOV::STRAIGHT, 95, 95, false, true, false) {}
 vector<SensorReading> RadarSensor::sense(const GridWorld& world, const Position& vehiclePos, directionState vehicleDir) const {
+    // Scan in a straight line ahead.
     vector<SensorReading> readings;
     int range = getRange();
 
@@ -159,8 +168,10 @@ vector<SensorReading> RadarSensor::sense(const GridWorld& world, const Position&
     return readings;
 }
 
+// Camera detects static objects/signs with a forward square FOV.
 CameraSensor::CameraSensor() : Sensor(7, FOV::SQUARE, 87, 95, true, false, true) {}
 vector<SensorReading> CameraSensor::sense(const GridWorld& world, const Position& vehiclePos, directionState vehicleDir) const {
+    // Scan a forward-facing rectangular area.
     vector<SensorReading> readings;
     int range = getRange();
     int startX, endX, startY, endY;

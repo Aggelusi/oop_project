@@ -7,8 +7,8 @@ using namespace std;
 #include <cmath>
 #include <string>
 
-class Sensor;          // ✅ forward declaration
-class SensorReading;  // ✅ forward declaration
+class Sensor;
+class SensorReading;
 class GridWorld;
 
 enum TurnAction {
@@ -34,8 +34,10 @@ public:
 	void attachToWorld(GridWorld* w);
     void addSensor(Sensor* s);
     void setGPSTargets(const std::vector<Position>& targets);
+	void setMinConfidenceThreshold(double threshold);
     Position getPosition() const;
     directionState getDirection() const;
+	bool isNavigationComplete() const;
 
 private:
 	Position pos;
