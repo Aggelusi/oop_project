@@ -9,11 +9,6 @@
 #include "grid.h"
 using namespace std;
 
-struct Position {
-    int x;
-    int y;
-};
-
 enum class FOV {
 	STRAIGHT,
 	SQUARE
