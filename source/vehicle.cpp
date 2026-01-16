@@ -6,6 +6,10 @@ SelfDrivingCar::SelfDrivingCar(int x, int y, directionState dir)
     : pos{ x, y }, dir(dir), speed(STOPPED) {}
 
 SelfDrivingCar::~SelfDrivingCar() {
+    for (auto* s : sensors) {
+        delete s;
+    }
+    sensors.clear();
     std::cout << "SelfDrivingCar Destructed\n";
 }
 
