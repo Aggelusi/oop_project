@@ -77,8 +77,8 @@ public:
 	FOV getFOV() const;
 	bool canDetectStatic() const;
 	bool canDetectMoving() const;
-	int getDistanceAccuracy() const { return distanceAccuracy; }
-	int getObjectAccuracy() const { return objectAccuracy; }
+	int getDistanceAccuracy() const;
+	int getObjectAccuracy() const;
 };
 
 class LidarSensor : public Sensor {

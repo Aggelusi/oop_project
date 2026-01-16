@@ -3,6 +3,13 @@ using namespace std;
 #include "grid.h"
 #include "sensors.h"
 #include <vector>
+#include <algorithm>
+#include <cmath>
+#include <string>
+
+class Sensor;          // ✅ forward declaration
+class SensorReading;  // ✅ forward declaration
+class GridWorld;
 
 enum TurnAction {
 	LEFT,

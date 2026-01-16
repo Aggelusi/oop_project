@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -28,99 +29,88 @@ protected:
     Position pos;
     string id;
     char glyph;
-    Object* next; //Pointer to next object in linked list for multiple objects in same grid cell
-    Object* prev; //Pointer to previous object in linked list
+    Object* next; // Pointer to next object in linked list
+    Object* prev; // Pointer to previous object
     int priority;
 
 public:
-    Object(int x = 0, int y = 0, string id = "def", char glyph = 'X', int priority = 0, Object* next = NULL, Object* prev = NULL)
-        : pos({ x, y }), id(id), glyph(glyph), next(next), prev(prev), priority(priority) {
-    }
-    virtual ~Object() {}
+    Object(int x = 0, int y = 0, string id = "def", char glyph = 'X', int priority = 0, Object* next = nullptr, Object* prev = nullptr);
+    virtual ~Object();
 
-    int getX() const { return pos.x; }
-    int getY() const { return pos.y; }
-    string getID() const { return id; }
-    char getGlyph() const { return glyph; }
-    int getPriorityInv() const { return priority; }
-    Object* getNext() const { return next; }
-    Object* getPrev() const { return prev; }
+    int getX() const;
+    int getY() const;
+    string getID() const;
+    char getGlyph() const;
+    int getPriorityInv() const;
+    Object* getNext() const;
+    Object* getPrev() const;
 
-    void setX(int x) { pos.x = x; }
-    void setY(int y) { pos.y = y; }
-    void setID(string input) { id = input; }
-    void setGlyph(char g) { glyph = g; }
-    void setNext(Object* n) { next = n; }
-    void setPrev(Object* p) { prev = p; }
-    void setPriorityInv(int h) { priority = h; }
+    void setX(int x);
+    void setY(int y);
+    void setID(string input);
+    void setGlyph(char g);
+    void setNext(Object* n);
+    void setPrev(Object* p);
+    void setPriorityInv(int h);
 };
 
 class StaticObjects : public Object {
 public:
-    StaticObjects(int x, int y, string id, char glyph, int priority = 0)
-        : Object(x, y, id, glyph, priority) {}
-    ~StaticObjects() {}
+    StaticObjects(int x, int y, string id, char glyph, int priority = 0);
+    ~StaticObjects();
 };
 
 class StationaryVehicles : public StaticObjects {
 public:
-    StationaryVehicles(int x, int y, string id)
-        : StaticObjects(x, y, id, 'P', 8) {}
-    ~StationaryVehicles() {}
+    StationaryVehicles(int x, int y, string id);
+    ~StationaryVehicles();
 };
 
 class TrafficSigns : public StaticObjects {
 private:
-    string type; //Placeholder; Only valid value is STOP
+    string type; // Placeholder; Only valid value is STOP
 
 public:
-    TrafficSigns(int x, int y, string id, string type = "STOP")
-        : StaticObjects(x, y, id, 'S', 4), type(type) {}
-    ~TrafficSigns() {}
+    TrafficSigns(int x, int y, string id, string type = "STOP");
+    ~TrafficSigns();
 };
 
 class TrafficLights : public StaticObjects {
 private:
-    TrafficLightState state; //Duration: RED: 4TICKS, YELLOW: 2TICKS, GREEN: 8TICKS
-    int tickTracker; //Tracks ticks to change state
+    TrafficLightState state; // RED:4, YELLOW:2, GREEN:8
+    int tickTracker;
 
 public:
-    TrafficLights(int x, int y, string id, TrafficLightState state = RED, int tickTracker = 0)
-        : StaticObjects(x, y, id, 'R', 2), state(state), tickTracker(tickTracker) {}
-    ~TrafficLights() {}
+    TrafficLights(int x, int y, string id, TrafficLightState state = RED, int tickTracker = 0);
+    ~TrafficLights();
 
-    bool updateState();
+    bool updateState(); // Updates state based on tickTracker
 };
 
 class MovingObjects : public Object {
 protected:
     int speed;
-    int direction;
+    directionState direction;
 
 public:
-    MovingObjects(int x, int y, string id, char glyph, int speed, int priority = 0)
-        : Object(x, y, id, glyph, priority), speed(speed) {
-        direction = rand() % 4;
-    }
-    ~MovingObjects() {}
+    MovingObjects(int x, int y, string id, char glyph, int speed, int priority = 0);
+    ~MovingObjects();
 
-    void move(GridWorld& world); //Moves object in [direction] by [speed]
-    int getSpeed() const { return speed; }
-    int getDirection() const { return direction; }
+    void move(GridWorld& world); // Moves object
+    int getSpeed() const;
+    directionState getDirection() const;
 };
 
 class Bikes : public MovingObjects {
 public:
-    Bikes(int x, int y, string id)
-        : MovingObjects(x, y, id, 'B', HALF_SPEED, 5) {}
-    ~Bikes() {}
+    Bikes(int x, int y, string id);
+    ~Bikes();
 };
 
 class Cars : public MovingObjects {
 public:
-    Cars(int x, int y, string id)
-        : MovingObjects(x, y, id, 'C', FULL_SPEED, 6) {}
-    ~Cars() {}
+    Cars(int x, int y, string id);
+    ~Cars();
 };
 
 class GridWorld {
@@ -131,9 +121,9 @@ private:
     char* displayGrid;
     int seed;
 
-    TrafficLights** trafficLightsList; //Array of pointers to traffic lights for updating
-    Cars** carsList; //Array of pointers to cars for updating
-    Bikes** bikesList; //Array of pointers to bikes for updating
+    TrafficLights** trafficLightsList;
+    Cars** carsList;
+    Bikes** bikesList;
 
     int bikes;
     int cars_mov;
@@ -142,13 +132,13 @@ private:
     int lights;
 
 public:
-    GridWorld(int x = 40, int y = 40, int seed = time(NULL), int bikes = 4, int cars_mov = 3, int cars_static = 5, int signs = 2, int lights = 2);
+    GridWorld(int x = 40, int y = 40, int seed = time(nullptr), int bikes = 4, int cars_mov = 3, int cars_static = 5, int signs = 2, int lights = 2);
     ~GridWorld();
 
-    int getDimX() const { return dimX; }
-    int getDimY() const { return dimY; }
-    int index(int x, int y) const { return x + (dimX * y); }
-    Object* getv(int x, int y) const { return grid[index(x, y)]; }
+    int getDimX() const;
+    int getDimY() const;
+    int index(int x, int y) const;
+    Object* getv(int x, int y) const;
     void setv(int x, int y, Object* obj);
 
     void generateWorld();
