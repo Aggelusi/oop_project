@@ -111,7 +111,14 @@ int main(int argc, char** argv) {
             }
             gpsTargets.clear();
             for (size_t k = 0; k < coords.size(); k += 2) {
-                gpsTargets.push_back(Position{coords[k], coords[k + 1]});
+                int gx = coords[k];
+                int gy = coords[k + 1];
+                if (gx < 0 || gy < 0 || gx >= dimX || gy >= dimY) {
+                    cerr << "GPS target out of bounds: (" << gx << ", " << gy << ")\n";
+                    cerr << "World bounds are x:[0," << (dimX - 1) << "] y:[0," << (dimY - 1) << "]\n";
+                    return 1;
+                }
+                gpsTargets.push_back(Position{gx, gy});
             }
             gpsProvided = true;
             continue;

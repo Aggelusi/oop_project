@@ -6,6 +6,8 @@ SelfDrivingCar::SelfDrivingCar(int x, int y, directionState dir)
     : pos{ x, y }, dir(dir), speed(STOPPED) {}
 
 SelfDrivingCar::~SelfDrivingCar() {
+    for (auto* s : sensors) delete s;
+    sensors.clear();
     std::cout << "SelfDrivingCar Destructed\n";
 }
 
@@ -223,7 +225,7 @@ void SelfDrivingCar::executeMovement() {
     if (hazardClose || needToSlowForLight) {
         decelerate();
     } else {
-        if (axisDist > 1 && !atCurrentTarget(arrivalThreshold)) {
+        if (axisDist > 0 && !atCurrentTarget(arrivalThreshold)) {
             accelerate();
         }
     }
